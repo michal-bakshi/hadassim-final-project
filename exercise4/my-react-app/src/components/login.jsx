@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link , useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginApi } from '../axios/usersAxios';
 import { loginFunc } from '../redux/usersActions';
@@ -15,7 +15,7 @@ export const Login=()=>{
   const login=(e)=>{
     e.preventDefault()
     loginApi({phoneNumber:loginUser.phoneNumber})
-        .then((x)=>{myD(loginFunc("u",x.data));navigate('/')})
+        .then((x)=>{myD(loginFunc("u",x.data));navigate('/order_processing')})
         .catch((error)=>{console.log(error.message)})
   }
 
@@ -26,7 +26,7 @@ export const Login=()=>{
                 <form onSubmit={e=>login(e)}>
                   
                 <div  className="form-outline mb-4">
-                  <input type="password" className="form-control"onBlur={(x)=>setLoginUser({...loginUser,phoneNumber:x.target.value})} required/>
+                  <input type="password" className="form-control" onChange={(x)=>setLoginUser({...loginUser,phoneNumber:x.target.value})} required/>
                   <label className="form-label" >הקש מספר טלפון להתחברות</label>
                 </div>
                 <input type="hidden"  value="loginForm"/>
