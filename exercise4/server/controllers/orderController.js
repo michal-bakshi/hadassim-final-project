@@ -3,7 +3,7 @@ import Order from "../models/orderModel.js";
 import Product from "../models/productModel.js";
 
 
-export default{
+const orderController={
  getOrdersBySupplier :async (req, res) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(req.params.supplierId)) {
@@ -27,22 +27,28 @@ export default{
         res.status(500).json({ message: error.message });
     }
 },
-craeteOrder: async (req, res) => {
-    try {
-        const { supplierId, items } = req.body; 
-        console.log(req.body);
-        
-        
-        if (!supplierId || !items || items.length === 0) {
-            return res.status(400).json({ message: "Supplier ID and items are required." });
-        }
+  createOrderLogic : async ({ supplierId, items, additionalInfo }) => {
+  if (!supplierId || !items || items.length === 0) {
+    throw new Error("Supplier ID and items are required.");
+  }
 
-        const fullOrder = new Order({ supplierId, items ,status: "ממתינה" ,additionalInfo: req.body.additionalInfo});
-        await fullOrder.save(); 
-        res.status(201).json(fullOrder); 
-    } catch (error) {
-        res.status(500).json({ message: error.message }); 
-    }
+  const order = new Order({
+    supplierId,
+    items,
+    status: "ממתינה",
+    additionalInfo
+  });
+
+  await order.save();
+  return order;
+},
+craeteOrder: async (req, res) => {
+  try {
+    const order = await orderController.createOrderLogic(req.body);
+    res.status(201).json(order);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
  },
  confirmOrder: async (req, res) => {
     try {
@@ -77,12 +83,12 @@ craeteOrder: async (req, res) => {
       for (const item of order.items) {
         const existingProduct = await Product.findOne({
           name: item.name,
-          supplierId: order.supplierId,
         });
   
         if (existingProduct) {
         
           existingProduct.quantity += item.quantity;
+          existingProduct.supplierId = order.supplierId;
           await existingProduct.save();
         } else {
         
@@ -104,4 +110,4 @@ craeteOrder: async (req, res) => {
   },
   
 }
- 
+ export default orderController;

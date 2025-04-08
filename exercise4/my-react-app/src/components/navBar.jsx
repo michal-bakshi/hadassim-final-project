@@ -22,6 +22,9 @@ export const NavBar=()=>{
                     {!token &&  <li className="nav-item"> 
                             <Link to="/order_list" className="nav-link" >צפיה הזמנות</Link>
                         </li>}
+                        {!token &&  <li className="nav-item"> 
+                            <Link to="/messages" className="nav-link" > הודעות</Link>
+                        </li>}
                        {token && <li className="nav-item"> 
                             <Link to={'/order_processing'} className="nav-link" > הזמנות ספק </Link>
                         </li>}

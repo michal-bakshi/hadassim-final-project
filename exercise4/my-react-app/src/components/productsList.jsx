@@ -1,7 +1,8 @@
 import { use, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllProducts } from "../axios/productAxios";
-import { getTheAllpruducts } from "../redux/productActions";
+import { getAllProducts, reduceProduct } from "../axios/productAxios";
+import { getTheAllpruducts, reduce_pruduct } from "../redux/productActions";
+
 
 
 
@@ -9,21 +10,57 @@ import { getTheAllpruducts } from "../redux/productActions";
 export const ProductsList = () => {
 const pList=useSelector((state) => state.product.listProducts) || [];
 const [products, setProducts] = useState(pList);
+const [hasLoaded, setHasLoaded] = useState(false);
 const dispatch = useDispatch();
 
 
 useEffect(() => {
-    if(products.length === 0) {
+    if(products.length === 0 ||!hasLoaded){ 
         getAllProducts()
         .then((res) => {
             setProducts(res.data);
             dispatch(getTheAllpruducts(res.data));
+            setHasLoaded(true);
         })
         .catch((err) => console.error(err));  
     }
 
-},[products,dispatch]);
+},[products,dispatch,hasLoaded]);
 
+const decreaseQuantity = (productId) => {
+  setProducts((prevProducts) => 
+    prevProducts.map((product) =>
+      product._id === productId && product.quantity > 0
+        ? { ...product, quantity: product.quantity - 1 }
+        : product
+    )
+  );
+  reduceProduct(productId)
+  .then((res) => {
+    const { product, notification } = res.data;
+
+    if (notification) {
+      const existingNotifications = JSON.parse(localStorage.getItem("Notifications") || "[]");
+
+      
+      existingNotifications.push({
+        message: notification,
+        date: new Date().toISOString(),
+        productId: productId
+      });
+
+     
+      localStorage.setItem("Notifications", JSON.stringify(existingNotifications));
+
+    }
+
+    dispatch(reduce_pruduct(productId))
+    console.log(res.data);
+  })
+  .catch((err) => {
+    console.error(err);
+  })
+};
 
   return (
     <div className="container mt-5">
@@ -37,6 +74,7 @@ useEffect(() => {
             <th>💰 Price</th>
             <th>🔢 Quantity</th>
             <th>🏭 Supplier</th>
+            <th>⏬ Action</th>
           </tr>
         </thead>
         <tbody>
@@ -46,6 +84,15 @@ useEffect(() => {
               <td>{product.price} ₪</td>
               <td>{product.quantity}</td>
               <td>{product.supplierId?.companyName || "לא זמין"}</td>
+              <td>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => decreaseQuantity(product._id)}
+                    disabled={product.quantity <= 0} 
+                  >
+                    ➖
+                  </button>
+                </td>
             </tr>
           ))}
         </tbody>

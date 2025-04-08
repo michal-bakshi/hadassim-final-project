@@ -12,6 +12,13 @@ export const mystore = {
         case "GET_PPRODUCT":state.listGame=(action.payload)
         break;
         case "GET_PRODUCT_BY_SUPPLIER":state.productBySuppllier=(action.payload)
+        break;
+        case "REDUCE_PRODUCT":state.listProducts=state.listProducts.map((product) => {
+          if (product._id === action.payload) {
+            return { ...product, quantity: product.quantity - 1 };
+          }
+          return product;
+        });
      
     }
   },mystore)

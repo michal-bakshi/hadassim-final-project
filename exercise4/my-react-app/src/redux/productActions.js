@@ -1,6 +1,11 @@
 export const add_pruduct=(pruduct)=>{
     return {type:"ADD_PRODUCT",payload:pruduct}
+
   }
+  export const reduce_pruduct=(pruductId)=>{
+    return {type:"REDUCE_PRODUCT",payload:pruductId}
+  }
+
   export const getTheAllpruducts=(myData)=>{
     return {type:"GET_PRODUCTS",payload:myData}
   }

@@ -1,5 +1,5 @@
 import express from "express"
-import Schema from "mongoose";
+import mongoose from "mongoose";
 import cors from 'cors';
 import dotenv from 'dotenv';
 import order from "./route/orderRoute.js";
@@ -10,7 +10,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-Schema.connect(process.env.MONGO_URI, { 
+mongoose.connect(process.env.MONGO_URI, { 
 }).then(() => {
   console.log('Connected to MongoDB');
 }).catch(err => {

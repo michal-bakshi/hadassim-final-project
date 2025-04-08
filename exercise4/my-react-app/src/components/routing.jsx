@@ -5,6 +5,8 @@ import { MakeOrder } from "./makeOrder"
 import { OrderList } from "./OrdersList"
 import { OrderProcessing } from "./orderProcessing"
 import { ProductsList } from "./productsList"
+import { Messages } from "./messages"
+import { AddProduct } from "./addProduct"
 
 export const Routing=()=>{
     return <Routes>
@@ -14,6 +16,7 @@ export const Routing=()=>{
         <Route path="/order_list" element={<OrderList></OrderList>}></Route>
         <Route path="/order_processing" element={<OrderProcessing></OrderProcessing>}></Route>
         <Route path="/products_list" element={<ProductsList></ProductsList>}></Route>
-       
+       <Route path="/messages" element={<Messages></Messages>}></Route>
+       <Route path="/add_product" element={<AddProduct></AddProduct>}></Route>
     </Routes>
 }
